@@ -1,0 +1,27 @@
+﻿<CustomUIModelMetadata 
+    xmlns="bb_appfx_customuimodelmetadata"
+    xmlns:c="bb_appfx_commontypes"
+    ID="ec191418-12b8-41a1-b0ea-9cf600b149eb"
+    Name="Radius Search Extended Parameters"
+    Description="Additional parameters for the radius search"
+    Author="SDK Author"
+    >
+
+  <FormMetaData xmlns="bb_appfx_commontypes">
+    <FormFields>
+     
+      <FormField FieldID="ADDRESSTYPE" Caption="Include only addresses with this type" DataType="Guid">
+        <CodeTable CodeTableName="ADDRESSTYPECODE" />
+      </FormField>
+     
+    </FormFields>
+
+        <WebUIComponent>
+            <UIModel AssemblyName="CustomMapping.UIModel.dll" ClassName="CustomMapping.UIModel.RadiusSearchExtendedParametersUIModel" />
+            <WebUI>
+                <ExternalResource Url="browser/htmlforms/custom/custommapping/RadiusSearchExtendedParameters.html" />
+            </WebUI>
+        </WebUIComponent>
+  </FormMetaData>
+
+</CustomUIModelMetadata>

@@ -1,0 +1,10 @@
+﻿<UIModelWizardMetadata>
+  <SpecFileName>RadiusSearchExtendedParameters.custom.xml</SpecFileName>
+  <Namespace></Namespace>
+  <ClassName>RadiusSearchExtendedParametersUIModel</ClassName>
+  <HtmlInfo GenerateHtml="true">
+    <HtmlFile>RadiusSearchExtendedParameters.html</HtmlFile>
+    <HtmlFolder>htmlforms\custom\custommapping</HtmlFolder>
+  </HtmlInfo>
+  <GenerateFromDatabase>false</GenerateFromDatabase>
+</UIModelWizardMetadata>

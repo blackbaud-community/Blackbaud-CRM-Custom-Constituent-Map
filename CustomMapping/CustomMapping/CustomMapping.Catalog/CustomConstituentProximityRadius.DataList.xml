@@ -1,0 +1,110 @@
+<DataListSpec 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    ID="9e9822e6-1ca6-4289-b658-b6665f4a129f"
+    Name="Constituent Proximity Radius List (Custom)"
+    Description="Returns a custom list of constituents within a given radius from a set of coordinates."
+    Author="SDK Author"
+    xmlns="bb_appfx_datalist"
+    >
+  
+  <ResourceFile AssemblyName="Blackbaud.AppFx.Constituent.Catalog.dll" ClassName="Blackbaud.AppFx.Constituent.Catalog.ConstituentProximityRadius.DataList" />
+  <SPDataList SPName="USR_USP_DATALIST_CUSTOMCONSTITUENTPROXIMITYRADIUS">
+    <CreateProcedureSQL xmlns="bb_appfx_commontypes">
+
+      create procedure dbo.USR_USP_DATALIST_CUSTOMCONSTITUENTPROXIMITYRADIUS(
+      @LATITUDE decimal(16,13),
+      @LONGITUDE decimal(16,13),
+      @DISTANCEMILES int,
+      @CURRENTAPPUSERID uniqueidentifier = null,
+      @MAXROWS integer = 501,
+      @ADDRESSTYPE uniqueidentifier = null
+      )
+      as
+      set nocount on;
+
+      declare @ISSYSADMIN bit = dbo.UFN_APPUSER_ISSYSADMIN(@CURRENTAPPUSERID)
+      declare @SITEREQUIREDFORUSER bit = dbo.UFN_SITEREQUIREDFORUSER(@CURRENTAPPUSERID)
+      declare @USERSITES table (SITEID uniqueidentifier)
+
+      insert into @USERSITES
+      select SITEID from dbo.UFN_SITESFORUSER(@CURRENTAPPUSERID)
+
+      select top(@MAXROWS)
+      CONSTITUENT.ID,
+      CONSTITUENT.NAME,
+      ADDRESS.ID [ADDRESSID],
+      ADDRESS.ADDRESSBLOCK,
+      ADDRESS.CITY,
+      STATE.ABBREVIATION [STATE],
+      ADDRESS.POSTCODE,
+      COUNTRY.ABBREVIATION [COUNTRY],
+      coalesce(ADDRESSCOORDINATES.LATITUDE, POSTCODECOORDINATES.LATITUDE) as LATITUDE,
+      coalesce(ADDRESSCOORDINATES.LONGITUDE, POSTCODECOORDINATES.LONGITUDE) as LONGITUDE,
+      cast(dbo.UFN_COORDINATES_GETDISTANCEINMILES(@LATITUDE,
+      @LONGITUDE,
+      coalesce(ADDRESSCOORDINATES.LATITUDE, POSTCODECOORDINATES.LATITUDE),
+      coalesce(ADDRESSCOORDINATES.LONGITUDE, POSTCODECOORDINATES.LONGITUDE)) as int) DISTANCEMILES,
+      null as GROUPID,
+      null as GROUPNAME,
+      dbo.UFN_PHONE_GETINTERNATIONALNUMBER(PHONE.COUNTRYID, PHONE.NUMBER) as PHONENUMBER,
+      EMAILADDRESS.EMAILADDRESS
+      from dbo.CONSTITUENT
+      inner join dbo.ADDRESS on CONSTITUENT.ID = [ADDRESS].CONSTITUENTID
+      --and ADDRESS.ISPRIMARY = 1
+      left join dbo.PHONE on CONSTITUENT.ID = PHONE.CONSTITUENTID and PHONE.ISPRIMARY = 1
+      left join dbo.EMAILADDRESS on CONSTITUENT.ID = EMAILADDRESS.CONSTITUENTID and EMAILADDRESS.ISPRIMARY = 1
+      left join dbo.POSTCODECOORDINATES on ADDRESS.POSTCODE = POSTCODECOORDINATES.POSTCODE
+      left join dbo.ADDRESSCOORDINATES on ADDRESS.ID = ADDRESSCOORDINATES.ADDRESSID
+      left join dbo.STATE on [STATE].ID = ADDRESS.STATEID
+      left join dbo.COUNTRY on COUNTRY.ID = ADDRESS.COUNTRYID
+      where dbo.UFN_COORDINATES_GETDISTANCEINMILES(@LATITUDE,
+      @LONGITUDE,
+      coalesce(ADDRESSCOORDINATES.LATITUDE, POSTCODECOORDINATES.LATITUDE),
+      coalesce(ADDRESSCOORDINATES.LONGITUDE, POSTCODECOORDINATES.LONGITUDE)) &lt;= @DISTANCEMILES
+      AND ((@ADDRESSTYPE is null) or (ADDRESS.ADDRESSTYPECODEID = @ADDRESSTYPE))
+      and (@ISSYSADMIN = 1
+      or ((dbo.UFN_SECURITY_APPUSER_GRANTED_DATALIST_FORCONSTIT(@CURRENTAPPUSERID, '9e9822e6-1ca6-4289-b658-b6665f4a129f', CONSTITUENT.ID) = 1)
+      and (@SITEREQUIREDFORUSER = 0
+      or exists(select 1
+      from dbo.UFN_SITEID_MAPFROM_CONSTITUENTID(CONSTITUENT.ID) CONSTITSITES
+      inner join @USERSITES USERSITES on CONSTITSITES.SITEID = USERSITES.SITEID))))
+      order by dbo.UFN_COORDINATES_GETDISTANCEINMILES(@LATITUDE,
+      @LONGITUDE,
+      coalesce(ADDRESSCOORDINATES.LATITUDE, POSTCODECOORDINATES.LATITUDE),
+      coalesce(ADDRESSCOORDINATES.LONGITUDE, POSTCODECOORDINATES.LONGITUDE));
+
+    </CreateProcedureSQL>
+  </SPDataList>
+  <Parameters>
+    <FormMetaData xmlns="bb_appfx_commontypes">
+      <FormFields>
+        <FormField FieldID="LATITUDE" DataType="Decimal" Caption="Latitude" Precision="16" Scale="13" CaptionResourceKey="$$latitude" />
+        <FormField FieldID="LONGITUDE" DataType="Decimal" Caption="Longitude" Precision="16" Scale="13" CaptionResourceKey="$$longitude" />
+        <FormField FieldID="DISTANCEMILES" DataType="Integer" Caption="Distance in miles" CaptionResourceKey="$$distance_in_miles" />
+        <FormField FieldID="ADDRESSTYPE" Caption="Include only addresses with this type" DataType="Guid">
+          <CodeTable CodeTableName="ADDRESSTYPECODE" />
+        </FormField>
+      </FormFields>
+    </FormMetaData>
+  </Parameters>
+  <Output>
+    <OutputFields>
+      <OutputField FieldID="ID" Caption="ID" DataType="Guid" CaptionResourceKey="$$id" />
+      <OutputField FieldID="NAME" Caption="Name" DataType="String" CaptionResourceKey="$$name" />
+      <OutputField FieldID="ADDRESSID" Caption="Address ID" DataType="Guid" CaptionResourceKey="$$address_id" />
+      <OutputField FieldID="ADDRESSBLOCK" Caption="Address" DataType="String" CaptionResourceKey="$$address" />
+      <OutputField FieldID="CITY" Caption="City" DataType="String" CaptionResourceKey="$$city" />
+      <OutputField FieldID="STATE" Caption="State" DataType="String" CaptionResourceKey="$$state" />
+      <OutputField FieldID="POSTCODE" Caption="Post code" DataType="String" CaptionResourceKey="$$post_code" />
+      <OutputField FieldID="COUNTRY" Caption="Country" DataType="String" CaptionResourceKey="$$country" />
+      <OutputField FieldID="LATITUDE" Caption="Latitude" DataType="Decimal" CaptionResourceKey="$$latitude" />
+      <OutputField FieldID="LONGITUDE" Caption="Longitude" DataType="Decimal" CaptionResourceKey="$$longitude" />
+      <OutputField FieldID="DISTANCEMILES" Caption="Distance in miles" DataType="Integer" CaptionResourceKey="$$distance_in_miles" />
+      <OutputField FieldID="GROUPID" Caption="Group ID" DataType="Guid" CaptionResourceKey="$$group_id" />
+      <OutputField FieldID="GROUPNAME" Caption="Group name" DataType="String" CaptionResourceKey="$$group_name" />
+      <OutputField FieldID="PHONENUMBER" Caption="Phone number" DataType="String" CaptionResourceKey="$$phone_number" />
+      <OutputField FieldID="EMAILADDRESS" Caption="Email address" DataType="String" CaptionResourceKey="$$email_address" />
+    </OutputFields>
+  </Output>
+</DataListSpec>

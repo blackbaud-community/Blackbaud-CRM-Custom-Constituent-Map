@@ -1,0 +1,75 @@
+﻿<PageDefinitionSpec xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  ID="69159193-2292-49cc-a99f-d79e65ba4118"
+  Name="Custom Map Page"
+  Description="Displays an interactive map which can be used to locate constituents."
+  Author="SDK Author"
+  ExpressionDataFormID="a62f4c02-9248-464b-b2ba-26678ea9801b"
+  ContextRecordType="Mapping Context"
+  xmlns="bb_appfx_pagedefinition">
+ 
+  <ResourceFile
+    AssemblyName="Blackbaud.AppFx.Mapping.Catalog.dll"
+    ClassName="Blackbaud.AppFx.Mapping.Catalog.Map.Page" />
+  <PageHeader
+    Caption="Custom Mapping Page"
+    ImageKey="CATALOG:Blackbaud.AppFx.Mapping.Catalog.dll,Blackbaud.AppFx.Mapping.Catalog.constituentmap.png" />
+  <Tabs>
+    <Tab
+      Caption="Map"
+      ID="da6a6f60-7927-4fb0-8934-e5588f098ca1"
+      CaptionResourceKey="$$map">
+      <Sections>
+        <Section
+          ID="4cba9b7c-896e-4cef-be0f-dc3e8829bad7"
+          Visible="= Page.Fields!MAPPINGCREDENTIALSEXIST AndAlso Globals.IsWebShell"
+            HideCaption="true">
+          <CustomUIModel
+            AssemblyName="CustomMapping.UIModel.dll"
+            ClassName="CustomMapping.UIModel.ConstituentMapCustomUIModel" />
+        </Section>
+      </Sections>
+    </Tab>
+  </Tabs>
+  <PageActionGroups>
+    <PageActionGroup
+      ID="3486b4b6-6cd2-4de3-82a5-9398ed409fcf"
+      Caption="Tasks"
+      ImageKey="RES:Tasks"
+      CaptionResourceKey="$$tasks"
+      Visible="=Globals.CurrentAppUserGrantedDataList(&quot;621AACFB-B9D0-4531-9A2F-FFBCAF64BFE8&quot;)">
+      <Actions>
+        <Action
+          ID="33ec20e6-7b98-44cd-a5ed-5df7f2f2666e"
+          Caption="Manage map instances"
+          ImageKey="CATALOG:Blackbaud.AppFx.Mapping.Catalog.dll,Blackbaud.AppFx.Mapping.Catalog.constituentmap.png"
+          CaptionResourceKey="$$manage_map_instances">
+          <ShowPage
+            PageID="f913a5b1-3f1e-44d0-8bda-d3eff0863028"
+            TabID="00000000-0000-0000-0000-000000000000"
+            SectionID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes" />
+          <HelpKey>MGMapInstancesPage.html</HelpKey>
+        </Action>
+      </Actions>
+    </PageActionGroup>
+    <PageActionGroup
+      ID="e913d8fc-0ef9-4b5f-bde1-521eee0cb242"
+      Caption="Configuration"
+      ImageKey="RES:fa_Configuration"
+      CaptionResourceKey="$$configuration">
+      <Actions>
+        <Action
+          ID="c238fb6c-5501-4146-963d-a6f8439f8708"
+          Caption="Map settings"
+          ImageKey="RES:config_bullet"
+          CaptionResourceKey="$$map_settings">
+          <ShowPage
+            PageID="af41b7b9-162d-4e19-9453-9ac7c2c6d619"
+            TabID="00000000-0000-0000-0000-000000000000"
+            SectionID="00000000-0000-0000-0000-000000000000" xmlns="bb_appfx_commontypes" />
+          <HelpKey>ADMMapPageEditCredentials.html</HelpKey>
+        </Action>
+      </Actions>
+    </PageActionGroup>
+  </PageActionGroups>
+  <HelpKey>MGMapPage.html</HelpKey>
+</PageDefinitionSpec>
