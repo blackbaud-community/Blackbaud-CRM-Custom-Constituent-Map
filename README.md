@@ -11,7 +11,7 @@ Placeholder for description
 
 This customization requires familiarity with Data Forms, UI Models, Custom UI Models, and Data Form Add-ins.
 
-To build the customization, you need to set up mapping credentials for your environment with the Map settings action on the Mapping Page in Blackbaud CRM.
+Before you build the customization, you must set up mapping credentials for your environment with the **Map settings** action on the **Mapping** page in Blackbaud CRM.
 
 ##Resources##
 * See the [Blackbaud CRM Read Me](https://github.com/blackbaud-community/Blackbaud-CRM/blob/master/README.md). 
