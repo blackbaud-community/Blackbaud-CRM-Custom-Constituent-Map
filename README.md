@@ -4,11 +4,9 @@ Blackbaud-CRM-Custom-Constituent-Map
 To extend a custom UI Model with an add-in or extension, you can register the add-in or extenison for the parent form that the custom UI Model summons. 
 However, if the custom UI Model is housed on a page and does not summon a parent form, extending it is more complicated.
 
-This sample demonstrates how to extend an out-of-the-box custom UI Model that appears on the **Mapping** paeg in Blackbaud CRM.
+This sample demonstrates how to extend an out-of-the-box custom UI Model that appears on the **Mapping** page in Blackbaud CRM.
 
-You can use the **Mapping** page to geographically locate prospects and constituents on an interactive map. The mapping tool allows you to 
-create maps with the addresses in your database, and it includes a custom UI Model that allows you to display all the constituents 
-within a certain radius. 
+You can use the **Mapping** page to geographically locate prospects and constituents on an interactive map. The mapping tool allows you to  create maps with the addresses in your database, and it includes a custom UI Model that allows you to display all the constituents within a certain radius. 
 
 To access the **Mapping** page, you click **Constituent map** from the **Constituents** functional area. To conduct a radius search, you 
 place a pushpin on the map and then select **Radius search** from the options that appear when you hover the cursor over the pushpin. 
